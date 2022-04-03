@@ -1,0 +1,21 @@
+html,body {
+ height: 100%;
+ width: 100%;
+ font-size: 16px;
+ margin: 0; 
+ padding: 0;
+}
+
+#app {
+  margin: .5rem;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+input {
+  margin-right: .5rem;
+}

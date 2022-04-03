@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Uncommon Ground</title>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+  <link rel='stylesheet' href='/style.css'>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
+  <script src="https://unpkg.com/localbase/dist/localbase.min.js"></script>
+</head>
+
+<body>
+
+  <script src="https://unpkg.com/vue@3"></script>
+  
+  <div id='app'>
+    <ul>
+      <li :key="'message' + index" v-for="(message, index) in messages">
+        {{ message }}
+      </li>
+    </ul>
+    <input @blur='handleBlur' @focus='handleFocus' type='text' v-model='input' />
+    <button @click='handleSend'>Send</button>
+    <div v-if='typing'>
+      User is typing...
+    </div>
+  </div>
+  
+  <script>
+
+    const socket = io()
+
+    const app = Vue.createApp({
+      data() {
+        return {
+          input: '',
+          messages: [],
+          typing: false
+        }
+      },
+      methods: {
+        handleSend() {
+          socket.emit('send_message', this.input)
+          this.input = ''
+        },
+        handleBlur() {
+          socket.emit('send_blur')
+        },
+        handleFocus() {
+          socket.emit('send_focus')
+        }
+      }
+    }).mount('#app')
+
+    socket.on('return_message', (message) => {
+      app.messages.push(message)
+    })
+
+    socket.on('return_focus', () => {
+      app.typing = true 
+    })
+    
+    socket.on('return_blur', () => {
+      app.typing = false 
+    })
+
+  </script>
+
+</body>
+
+</html>
